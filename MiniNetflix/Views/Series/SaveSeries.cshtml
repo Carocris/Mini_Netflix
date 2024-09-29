@@ -1,0 +1,152 @@
+﻿@model Application.ViewModels.SaveSeriesViewModel
+
+@{
+    bool editMode = Model.Id != 0;
+
+    ViewData["Title"] = "Guardar Serie";
+}
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <ul>
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <li>@error.ErrorMessage</li>
+            }
+        </ul>
+    </div>
+}
+
+<div class="container-fluid mt-5 mb-5 p-3">
+    <div class="row">
+        <div class="col-6 offset-3">
+            <div class="card">
+                <div class="card-header bg-dark text-light text-center">
+                    <h4>@(editMode ? $"Editando la serie: {Model.Title}" : "Creando una nueva serie")</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" asp-controller="Series" asp-action="@(editMode ? "Edit" : "Create")">
+                        <div class="mb-3">
+                            <label asp-for="Title" class="form-label">Title:</label>
+                            <input type="text" asp-for="Title" class="form-control" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="VideoUrl" class="form-label">VideoUrl:</label>
+                            <input type="text" asp-for="VideoUrl" class="form-control" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="ImageUrl" class="form-label">ImageUrl:</label>
+                            <input type="text" asp-for="ImageUrl" class="form-control" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label">Description:</label>
+                            <textarea asp-for="Description" class="form-control"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="ProducerId" class="form-label">Producer:</label>
+                            <select asp-for="ProducerId" class="form-control">
+                                <option value="">Seleccione un productor</option>
+                                @foreach (var producer in ViewBag.Producers)
+                                {
+                                    <option value="@producer.Id">@producer.Name</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="GenreId" class="form-label">Genre:</label>
+                            <select asp-for="GenreId" class="form-control" id="primaryGenreSelect">
+                                <option value="">Seleccione un género</option>
+                                @foreach (var genre in ViewBag.Genres)
+                                {
+                                    <option value="@genre.Id">@genre.Name</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Secondary Genres (máximo 3):</label>
+                            <div>
+                                @foreach (var genre in ViewBag.Genres)
+                                {
+                                    <div class="form-check">
+                                        <input class="form-check-input secondary-genre"
+                                               type="checkbox"
+                                               name="SecondaryGenreIds"
+                                               value="@genre.Id"
+                                               id="genre_@genre.Id"
+                                        @(Model.SecondaryGenreIds != null && Model.SecondaryGenreIds.Contains(genre.Id) ? "checked" : "")>
+                                        <label class="form-check-label" for="genre_@genre.Id">
+                                            @genre.Name
+                                        </label>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <input type="hidden" asp-for="Id">
+
+                        <div class="d-flex justify-content-between">
+                            <a asp-controller="Series" asp-action="Index" class="btn btn-danger">Volver atrás</a>
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+ <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const primaryGenreSelect = document.getElementById('primaryGenreSelect');
+        const secondaryGenreCheckboxes = document.querySelectorAll('.secondary-genre');
+
+        function updateSecondaryGenres() {
+            const selectedPrimaryGenre = primaryGenreSelect.value;
+
+            secondaryGenreCheckboxes.forEach(checkbox => {
+                if (checkbox.value === selectedPrimaryGenre) {
+                    checkbox.disabled = true;
+                    checkbox.checked = false;
+                } else {
+                    checkbox.disabled = false;
+                }
+            });
+        }
+
+        function limitSecondaryGenres() {
+            const selected = document.querySelectorAll('.secondary-genre:checked');
+            if (selected.length >= 3) {
+                secondaryGenreCheckboxes.forEach(box => {
+                    if (!box.checked) {
+                        box.disabled = true;
+                    }
+                });
+            } else {
+                secondaryGenreCheckboxes.forEach(box => {
+                    if (box.value !== primaryGenreSelect.value) {
+                        box.disabled = false;
+                    }
+                });
+            }
+        }
+
+        primaryGenreSelect.addEventListener('change', function () {
+            updateSecondaryGenres();
+            limitSecondaryGenres();
+        });
+
+        secondaryGenreCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', limitSecondaryGenres);
+        });
+
+        updateSecondaryGenres();
+        limitSecondaryGenres();
+    });
+</script>

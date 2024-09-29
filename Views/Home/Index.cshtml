@@ -1,0 +1,156 @@
+﻿@model List<Application.ViewModels.SerieViewModel>
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div id="carouselExampleDark" class="carousel carousel-dark slide">
+        <div class="carousel-indicators" >
+            <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        </div>
+    <div class="carousel-inner" style="height: 600px;">
+        <div class="carousel-item active" data-bs-interval="10000" style="height: 600px;">
+            <img src="https://media.glamour.mx/photos/65e76643a728eee1a17a6ab8/4:3/w_1816,h_1362,c_limit/la-reina-de-las-lagrimas-d%C3%B3nde-ver.jpg" class="d-block w-100" alt="..." style="height: 600px;">
+                <div class="carousel-caption d-none d-md-block">
+                    <h5>First slide label</h5>
+                    <p>Some representative placeholder content for the first slide.</p>
+                </div>
+            </div>
+        <div class="carousel-item" data-bs-interval="2000" style="height: 600px;">
+            <img src="https://wallpapers-clan.com/wp-content/uploads/2024/02/anime-girl-enjoying-mountains-desktop-wallpaper-preview.jpg" class="d-block w-100" alt="..." style="height: 600px;">
+                <div class="carousel-caption d-none d-md-block">
+                    <h5>Second slide label</h5>
+                    <p>Some representative placeholder content for the second slide.</p>
+                </div>
+            </div>
+        <div class="carousel-item" style="height: 600px;">
+            <img src="https://wallpapers-clan.com/wp-content/uploads/2024/02/anime-girl-enjoying-mountains-desktop-wallpaper-preview.jpg" class="d-block w-100" alt="..." style="height: 600px;">
+                <div class="carousel-caption d-none d-md-block">
+                    <h5>Third slide label</h5>
+                    <p>Some representative placeholder content for the third slide.</p>
+                </div>
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+
+
+@*
+    CARDSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
+*@
+<div class="container-fluid p-3">
+    <div class="row">
+        <div class="col text-end mb-4">
+            <div class="dropdown">
+                <button id="filterBtn" class="btn btn-filter dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-filter"></i> Filtros
+                </button>
+                <!-- Menú alineado a la derecha -->
+                <ul class="dropdown-menu dropdown-menu-end p-3" aria-labelledby="filterBtn">
+                    <li>
+                        <div class="mb-3">
+                            <label for="Genres" class="form-label">Géneros</label>
+                            <select class="form-select" id="Genres" name="genreId">
+                                <option value="">Todos</option>
+                                @foreach (var genre in ViewBag.Genres)
+                                {
+                                    <option value="@genre.Id">@genre.Name</option>
+                                }
+                                }
+                            </select>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="mb-3">
+                            <label for="Producers" class="form-label">Productoras</label>
+                            <select class="form-select" id="Producers" name="producerId">
+                                <option value="">Todas</option>
+                                @foreach (var producer in ViewBag.Producers)
+                                {
+                                    <option value="@producer.Id">@producer.Name</option>
+                                }
+                                }
+                            </select>
+                        </div>
+                    </li>
+                    <li>
+                        <button id="applyFiltersBtn" class="btn btn-danger">Aplicar Filtros</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+        @if (Model == null || Model.Count == 0)
+        {
+            <h2>No se ha encontrado ninguna serie</h2>
+
+            <!-- Alerta cuando no hay resultados -->
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    alert("No se encontraron series con ese nombre.");
+                });
+            </script>
+        }
+        else
+        {
+            <div class="row row-cols-1 row-cols-md-3 g-3">
+                @foreach (Application.ViewModels.SerieViewModel item in Model)
+                {
+                    <div class="col">
+                        <div class="card mb-3">
+                            <div class="row g-0">
+                                <div class="col-md-7">
+                                    <img src="@item.ImageUrl" alt="Imagen de @item.Title" class="img-fluid rounded-start">
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="card-body">
+                                        <h5 class="card-title">@item.Title</h5>
+                                        <p class="card-text">
+                                            <span class="fw-bold">Productora:</span> @item.ProducerTitle
+                                        </p>
+                                        <p class="card-text">
+                                            <span class="fw-bold">Descripción:</span> @item.Description
+                                        </p>
+                                        <p class="card-text">
+                                            <span class="fw-bold">Géneros:</span>
+                                            @if (item.SecondaryGenres != null && item.SecondaryGenres.Count > 0)
+                                            {
+                                                <span>@item.GenreTitle - @string.Join(", ", item.SecondaryGenres)</span>
+                                            }
+                                            else
+                                            {
+                                                <span>@item.GenreTitle</span>
+                                            }
+                                        </p>
+                                        <a href="#" class="btn btn-outline-secondary">Detalles</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+       
+
+@*
+    CARDSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
+*@
+
+
+
+
+
+

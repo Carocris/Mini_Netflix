@@ -1,0 +1,51 @@
+﻿@model Application.ViewModels.SaveProducerViewModel
+
+@{
+    bool editMode = Model.Id.HasValue && Model.Id.Value > 0;
+
+    ViewData["Title"] = "Guardar Productora";
+}
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <ul>
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <li>@error.ErrorMessage</li>
+            }
+        </ul>
+    </div>
+}
+
+
+<div class="container-fluid mt-5 mb-5 p-3">
+    <div class="row">
+        <div class="col-6 offset-3">
+            <div class="card">
+                <div class="card-header bg-dark text-light text-center">
+                    <h4>@(editMode ? $"Editando la productora: {Model.Name}" : "Creando una nueva productora")</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" asp-controller="Producers" asp-action="@(editMode ? "Edit" : "Create")">
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label">Nombre:</label>
+                            <input type="text" asp-for="Name" class="form-control" />
+                        </div>
+
+                        <input type="hidden" asp-for="Id">
+
+                        <div class="d-flex justify-content-between">
+                            <a asp-controller="Producers" asp-action="Index" class="btn btn-danger">Volver atrás</a>
+                            <button type="submit" class="btn btn-dark">Guardar</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+

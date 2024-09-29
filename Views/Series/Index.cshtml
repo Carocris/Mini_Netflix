@@ -1,0 +1,121 @@
+﻿@model List<Application.ViewModels.SerieViewModel>
+@{
+    ViewData["Title"] = "Mant. de series";
+}
+
+
+@*
+    CARDSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
+*@
+
+<div class="container">
+    <!-- Título centrado -->
+    <div class="row mb-4">
+        <div class="col text-center mt-3">
+            <h2>Listado de Series</h2>
+        </div>
+    </div>
+
+    <!-- Botones de Agregar Serie y Filtro en la misma fila pero invertidos -->
+    <div class="row mb-4">
+        <div class="col text-start">
+            <!-- Botón Filtros -->
+            <div class="dropdown d-inline">
+                <button id="filterBtn" class="btn btn-filter dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-filter"></i> Filtros
+                </button>
+                <!-- Menú alineado a la izquierda -->
+                <ul class="dropdown-menu dropdown-menu-end p-3" aria-labelledby="filterBtn">
+                    <li>
+                        <div class="mb-3">
+                            <label for="Genres" class="form-label">Géneros</label>
+                            <select class="form-select" id="Genres" name="genreId">
+                                <option value="">Todos</option>
+                                @foreach (var genre in ViewBag.Genres)
+                                {
+                                    <option value="@genre.Id">@genre.Name</option>
+                                }
+                            </select>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="mb-3">
+                            <label for="Producers" class="form-label">Productoras</label>
+                            <select class="form-select" id="Producers" name="producerId">
+                                <option value="">Todas</option>
+                                @foreach (var producer in ViewBag.Producers)
+                                {
+                                    <option value="@producer.Id">@producer.Name</option>
+                                }
+                            </select>
+                        </div>
+                    </li>
+                    <li>
+                        <button id="applyFiltersBtn" class="btn btn-danger">Aplicar Filtros</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col text-end">
+            <!-- Botón para agregar nueva serie -->
+            <a asp-controller="Series" asp-action="Create" class="btn btn-success">
+                <i class="bi bi-plus"></i> Agregar Serie
+            </a>
+        </div>
+    </div>
+
+
+
+
+    <!-- Listado de series -->
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var serie in Model)
+        {
+            <div class="col">
+                <div class="card h-100 mb-3" style="min-height: 500px;">
+                    <div style="height: 350px; overflow: hidden;">
+                        <img src="@serie.ImageUrl" alt="Imagen de @serie.Title" class="card-img-top" style="width: 100%; object-fit: contain;">
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">@serie.Title</h5>
+                        <p class="card-text">
+                            <span class="fw-bold">Productora:</span> @serie.ProducerTitle
+                        </p>
+                        <p class="card-text">
+                            <span class="fw-bold">Descripción:</span> @serie.Description
+                        </p>
+                        <p class="card-text">
+                            <span class="fw-bold">Géneros:</span>
+                            @if (serie.SecondaryGenres != null && serie.SecondaryGenres.Count > 0)
+                            {
+                                <span>@serie.GenreTitle</span>
+                                <span> @string.Join(", ", serie.SecondaryGenres) </span>
+                            }
+                            else
+                            {
+                                <span>@serie.GenreTitle</span>
+                            }
+                        </p>
+
+                        <!-- Botones de mantenimiento -->
+                        <div class="btn-group" role="group" aria-label="Acciones de serie">
+                            <a href="@Url.Action("Edit", "Series", new { id = serie.Id })" class="btn btn-outline-primary" style="width: 95px;  margin-right: 5px; border-radius: 5px;">Editar</a>
+                            <form asp-action="Delete" asp-controller="Series" method="post" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta serie?');">
+                                <input type="hidden" name="id" value="@serie.Id" />
+                                <button type="submit" class="btn btn-outline-danger" style="width: 95px;">Eliminar</button>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+
+
+
+@*
+    CARDSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
+*@

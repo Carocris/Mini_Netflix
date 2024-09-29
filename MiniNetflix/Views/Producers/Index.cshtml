@@ -1,0 +1,38 @@
+﻿@model List<Application.ViewModels.ProducerViewModel>
+
+@{
+    ViewData["Title"] = "Productora";
+}
+
+<div class="container mt-4 p-3">
+    <div class="row mb-4">
+        <div class="col-8">
+            <h2>Listado de productoras</h2>
+        </div>
+        <div class="col-4 text-end">
+            <a href="@Url.Action("Create", "Producers")" class="btn btn-dark">+ Nuevo</a>
+        </div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @foreach (var producer in Model)
+        {
+            <div class="col">
+                <div class="card text-center border-0">
+                    <div class="card-body">
+                        <h5 class="card-title">@producer.Name</h5>
+                        <div class="mt-3">
+                            <a href="@Url.Action("Edit", "Producers", new { id = producer.Id })" class="btn btn-outline-secondary me-2">
+                                Editar
+                            </a>
+                            <a href="@Url.Action("Delete", "Producers", new { id = producer.Id })" class="btn btn-outline-danger">
+                                Eliminar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
